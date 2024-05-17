@@ -9,6 +9,23 @@ from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
 from htmlTemplates import css, bot_template, user_template
 
+prompt_template = """
+You are a professional doctor. Based on the blood statistics PDF uploaded, tell the patient their blood age (glycan age) and compare it to their chronological age. 
+Provide the answer in this format:
+
+Based on the information from your GlycanAge report, your biological age is [BIOLOGICAL_AGE] years. This is [DIFFERENCE] years [younger/older] than your chronological age, which is [CHRONOLOGICAL_AGE] years.
+
+This indicates that your immune system and overall health are performing much [younger/older] than your actual age, likely due to factors such as lifestyle choices, diet, exercise, and potentially genetic advantages.
+"""
+
+prompt_template2 = """
+You are a professional doctor. Explain what blood (glycan) age is as if you were explaining to a five-year-old.
+"""
+
+prompt_template3 = """
+You are a professional doctor. Based on the blood statistics PDF uploaded, explain what blood (glycan) age indicates about their life and how to maintain it.
+"""
+
 def get_pdf_content(pdfs):
     text = ""
     for pdf in pdfs:
@@ -43,20 +60,14 @@ def get_conversation_chain(vectorstore):
     return conversation_chain
 
 def handle_user_input(user_question):
-    # Append user's question to the chat history
+
     st.session_state.chat_history += user_template.replace("{{MSG}}", user_question)
 
-    # Create a custom prompt based on user input for internal use
-    custom_prompt = f"Based on the inquiry about '{user_question}', what would be a thoughtful response?"
+    response = st.session_state.conversation({'question': prompt_template})
 
-    # Passing the custom prompt to the LLM for processing
-    response = st.session_state.conversation({'question': custom_prompt})
-
-    # Append the bot's answer to the chat history
     answer = response['answer']
     st.session_state.chat_history += bot_template.replace("{{MSG}}", answer)
 
-    # Update the display with the updated conversation history
     st.write(st.session_state.chat_history, unsafe_allow_html=True)
 
 def main():
