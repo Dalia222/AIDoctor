@@ -33,7 +33,7 @@ def get_vectorstore(text_chunks):
     return vectorstore
 
 def get_conversation_chain(vectorstore):
-    llm = ChatOpenAI()
+    llm = ChatOpenAI(model="gpt-4")
     memory = ConversationBufferMemory(memory_key='chat_history', return_messages=True)
     conversation_chain = ConversationalRetrievalChain.from_llm(
         llm=llm,
@@ -43,15 +43,21 @@ def get_conversation_chain(vectorstore):
     return conversation_chain
 
 def handle_user_input(user_question):
-    response = st.session_state.conversation({'question': user_question})
-    st.session_state.chat_history = response['chat_history']
+    # Append user's question to the chat history
+    st.session_state.chat_history += user_template.replace("{{MSG}}", user_question)
 
-    for i, message in enumerate(st.session_state.chat_history):
-        if i % 2 == 0:
-            st.write(user_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
-        else:
-            st.write(bot_template.replace("{{MSG}}", message.content), unsafe_allow_html=True)
-    st.write(response)
+    # Create a custom prompt based on user input for internal use
+    custom_prompt = f"Based on the inquiry about '{user_question}', what would be a thoughtful response?"
+
+    # Passing the custom prompt to the LLM for processing
+    response = st.session_state.conversation({'question': custom_prompt})
+
+    # Append the bot's answer to the chat history
+    answer = response['answer']
+    st.session_state.chat_history += bot_template.replace("{{MSG}}", answer)
+
+    # Update the display with the updated conversation history
+    st.write(st.session_state.chat_history, unsafe_allow_html=True)
 
 def main():
     load_dotenv()
@@ -61,7 +67,7 @@ def main():
     if "conversation" not in st.session_state:
         st.session_state.conversation = None
     if "chat_history" not in st.session_state:
-        st.session_state.chat_history = None
+        st.session_state.chat_history = ""
     
     st.header("DebateGPT :books:")
     pdfs = st.file_uploader("Upload your PDFs here and click on process", accept_multiple_files=True)
@@ -85,8 +91,7 @@ def main():
         st.write("DebateGPT is ready to respond to your questions.")
 
     with st.sidebar:
-        st.subheader("Tools:")
-        st.write("Article Writer")
+        st.subheader("Old blood tests:")
 
 if __name__ == "__main__":
     main()
