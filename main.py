@@ -52,7 +52,7 @@ def get_vectorstore(text_chunks):
     return vectorstore
 
 def get_conversation_chain(vectorstore):
-    llm = ChatOpenAI(model="gpt-4")
+    llm = ChatOpenAI(model="gpt-4o")
     memory = ConversationBufferMemory(memory_key='chat_history', return_messages=True)
     conversation_chain = ConversationalRetrievalChain.from_llm(
         llm=llm,
@@ -62,11 +62,11 @@ def get_conversation_chain(vectorstore):
     return conversation_chain
 
 def handle_user_input(user_question):
-    st.session_state.chat_history += user_template.replace("{{MSG}}", user_question)
-
+    
     if user_question == "":
         prompt = prompt_template0
     else:
+        st.session_state.chat_history += user_template.replace("{{MSG}}", user_question)
         prompt = prompt_template1.format(user_question=user_question)
 
     response = st.session_state.conversation({'question': prompt})
@@ -106,8 +106,6 @@ def main():
         st.session_state.initial_prompt_done = False
     if "buttons_disabled" not in st.session_state:
         st.session_state.buttons_disabled = False
-    if "uploaded_files" not in st.session_state:
-        st.session_state.uploaded_files = []
 
     st.header("Your AI Doctor 🩺")
     pdfs = st.file_uploader("Upload your PDFs here and click on process", accept_multiple_files=True)
@@ -126,9 +124,6 @@ def main():
             handle_user_input("")
             st.session_state.initial_prompt_done = True
 
-            for pdf in pdfs:
-                st.session_state.uploaded_files.append(pdf.name)
-
     if st.session_state.initial_prompt_done:
         if st.session_state.follow_up:
             st.write(bot_template.replace("{{MSG}}", "Are you familiar with blood age?"), unsafe_allow_html=True)
@@ -145,12 +140,10 @@ def main():
         #         handle_user_input(user_question)
 
     if st.session_state.conversation and not st.session_state.follow_up:
-        st.write("DoctorGPT is ready to respond to your questions.")
+        st.write("DoctorAi is ready to respond to your questions.")
 
     with st.sidebar:
         st.subheader("Old blood tests:")
-        for file in st.session_state.uploaded_files:
-            st.write(file)
 
 if __name__ == "__main__":
     main()
