@@ -52,7 +52,7 @@ def get_vectorstore(text_chunks):
     return vectorstore
 
 def get_conversation_chain(vectorstore):
-    llm = ChatOpenAI(model="gpt-4o")
+    llm = ChatOpenAI(model="gpt-4")
     memory = ConversationBufferMemory(memory_key='chat_history', return_messages=True)
     conversation_chain = ConversationalRetrievalChain.from_llm(
         llm=llm,
@@ -93,7 +93,7 @@ def handle_follow_up(answer):
 
 def main():
     load_dotenv()
-    st.set_page_config(page_title="DebateGPT", page_icon=":books:")
+    st.set_page_config(page_title="DoctorGPT", page_icon="🩺")
     st.write(css, unsafe_allow_html=True)
 
     if "conversation" not in st.session_state:
@@ -106,8 +106,10 @@ def main():
         st.session_state.initial_prompt_done = False
     if "buttons_disabled" not in st.session_state:
         st.session_state.buttons_disabled = False
+    if "uploaded_files" not in st.session_state:
+        st.session_state.uploaded_files = []
 
-    st.header("DebateGPT :books:")
+    st.header("Your AI Doctor 🩺")
     pdfs = st.file_uploader("Upload your PDFs here and click on process", accept_multiple_files=True)
     processBtn = st.button("Process")
     if processBtn:
@@ -123,6 +125,9 @@ def main():
             
             handle_user_input("")
             st.session_state.initial_prompt_done = True
+
+            for pdf in pdfs:
+                st.session_state.uploaded_files.append(pdf.name)
 
     if st.session_state.initial_prompt_done:
         if st.session_state.follow_up:
@@ -140,10 +145,12 @@ def main():
         #         handle_user_input(user_question)
 
     if st.session_state.conversation and not st.session_state.follow_up:
-        st.write("DebateGPT is ready to respond to your questions.")
+        st.write("DoctorGPT is ready to respond to your questions.")
 
     with st.sidebar:
         st.subheader("Old blood tests:")
+        for file in st.session_state.uploaded_files:
+            st.write(file)
 
 if __name__ == "__main__":
     main()
