@@ -1,3 +1,14 @@
+import base64
+
+# Function to convert image to base64
+def get_base64_image(image_path):
+    with open(image_path, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode()
+
+# Convert images to base64
+doctor_img = get_base64_image("./doctor.png")
+you_img = get_base64_image("./you.jpg")
+
 css = '''
 <style>
 .chat-message {
@@ -25,20 +36,20 @@ css = '''
 }
 '''
 
-bot_template = '''
+bot_template = f'''
 <div class="chat-message bot">
     <div class="avatar">
-        <img src="https://i.ibb.co/test.png" style="max-height: 78px; max-width: 78px; border-radius: 50%; object-fit: cover;">
+        <img src="data:image/png;base64,{doctor_img}" style="max-height: 78px; max-width: 78px; border-radius: 50%; object-fit: cover;">
     </div>
-    <div class="message">{{MSG}}</div>
+    <div class="message">{{{{MSG}}}}</div>
 </div>
 '''
 
-user_template = '''
+user_template = f'''
 <div class="chat-message user">
     <div class="avatar">
-        <img src="https://i.ibb.co/rdZC7LZ/Photo-logo-1.png">
+        <img src="data:image/jpeg;base64,{you_img}">
     </div>    
-    <div class="message">{{MSG}}</div>
+    <div class="message">{{{{MSG}}}}</div>
 </div>
 '''
