@@ -52,7 +52,7 @@ def get_vectorstore(text_chunks):
     return vectorstore
 
 def get_conversation_chain(vectorstore):
-    llm = ChatOpenAI(model="gpt-4o")
+    llm = ChatOpenAI(model="gpt-4")
     memory = ConversationBufferMemory(memory_key='chat_history', return_messages=True)
     conversation_chain = ConversationalRetrievalChain.from_llm(
         llm=llm,
@@ -62,7 +62,6 @@ def get_conversation_chain(vectorstore):
     return conversation_chain
 
 def handle_user_input(user_question):
-    
     if user_question == "":
         prompt = prompt_template0
     else:
@@ -89,6 +88,7 @@ def handle_follow_up(answer):
     st.session_state.chat_history += bot_template.replace("{{MSG}}", bot_answer)
     
     st.session_state.follow_up = False  
+    st.session_state.buttons_disabled = True
     st.write(st.session_state.chat_history, unsafe_allow_html=True)
 
 def main():
@@ -134,6 +134,8 @@ def main():
             if col2.button("No", disabled=st.session_state.buttons_disabled):
                 st.session_state.buttons_disabled = True
                 handle_follow_up("No")
+            # Update the disabling state after handling the button press.
+            st.session_state.buttons_disabled = True
         # else:
         #     user_question = st.text_input("What's going on? (Type a topic or question here)")
         #     if user_question:
