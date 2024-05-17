@@ -9,19 +9,21 @@ from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
 from htmlTemplates import css, bot_template, user_template
 
-prompt_template = """
+# Initial prompts as described in the request
+prompt_template0 = """
 You are a professional doctor. Based on the blood statistics PDF uploaded, tell the patient their blood age (glycan age) and compare it to their chronological age. 
 Provide the answer in this format:
 
-Based on the information from your GlycanAge report, your biological age is [BIOLOGICAL_AGE] years. This is [DIFFERENCE] years [younger/older] than your chronological age, which is [CHRONOLOGICAL_AGE] years.
+Hi there! I'm your AI Doctor, Based on the information from your GlycanAge report, your biological age is [BIOLOGICAL_AGE] years. This is [DIFFERENCE] years [younger/older] than your chronological age, which is [CHRONOLOGICAL_AGE] years.
 
 This indicates that your immune system and overall health are performing much [younger/older] than your actual age, likely due to factors such as lifestyle choices, diet, exercise, and potentially genetic advantages.
 """
-
-prompt_template2 = """
-You are a professional doctor. Explain what blood (glycan) age is as if you were explaining to a five-year-old.
+prompt_template1 = """
+You are a professional doctor. Based on the blood statistics PDF uploaded, answer the patient's questions {user_question} in a simple form
 """
-
+prompt_template2 = """
+You are a professional doctor. Explain what blood (glycan) age is as if you were explaining to a person with no medical background.
+"""
 prompt_template3 = """
 You are a professional doctor. Based on the blood statistics PDF uploaded, explain what blood (glycan) age indicates about their life and how to maintain it.
 """
@@ -50,7 +52,7 @@ def get_vectorstore(text_chunks):
     return vectorstore
 
 def get_conversation_chain(vectorstore):
-    llm = ChatOpenAI(model="gpt-4")
+    llm = ChatOpenAI(model="gpt-4o")
     memory = ConversationBufferMemory(memory_key='chat_history', return_messages=True)
     conversation_chain = ConversationalRetrievalChain.from_llm(
         llm=llm,
@@ -60,31 +62,56 @@ def get_conversation_chain(vectorstore):
     return conversation_chain
 
 def handle_user_input(user_question):
-
     st.session_state.chat_history += user_template.replace("{{MSG}}", user_question)
 
-    response = st.session_state.conversation({'question': prompt_template})
+    if user_question == "":
+        prompt = prompt_template0
+    else:
+        prompt = prompt_template1.format(user_question=user_question)
 
+    response = st.session_state.conversation({'question': prompt})
     answer = response['answer']
     st.session_state.chat_history += bot_template.replace("{{MSG}}", answer)
+    st.write(st.session_state.chat_history, unsafe_allow_html=True)
 
+    st.session_state.follow_up = True
+
+def handle_follow_up(answer):
+    st.session_state.chat_history += user_template.replace("{{MSG}}", answer)
+    
+    if answer == "Yes":
+        prompt = prompt_template3
+    else:
+        prompt = prompt_template2
+
+    response = st.session_state.conversation({'question': prompt})
+    bot_answer = response['answer']
+    st.session_state.chat_history += bot_template.replace("{{MSG}}", bot_answer)
+    
+    st.session_state.follow_up = False  
     st.write(st.session_state.chat_history, unsafe_allow_html=True)
 
 def main():
     load_dotenv()
     st.set_page_config(page_title="DebateGPT", page_icon=":books:")
     st.write(css, unsafe_allow_html=True)
-    
+
     if "conversation" not in st.session_state:
         st.session_state.conversation = None
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = ""
-    
+    if "follow_up" not in st.session_state:
+        st.session_state.follow_up = False
+    if "initial_prompt_done" not in st.session_state:
+        st.session_state.initial_prompt_done = False
+    if "buttons_disabled" not in st.session_state:
+        st.session_state.buttons_disabled = False
+
     st.header("DebateGPT :books:")
     pdfs = st.file_uploader("Upload your PDFs here and click on process", accept_multiple_files=True)
     processBtn = st.button("Process")
     if processBtn:
-        if not pdfs: 
+        if not pdfs:
             st.error("Please upload at least one PDF file to proceed.")
         else:
             with st.spinner("Processing"):
@@ -93,12 +120,26 @@ def main():
                 vectorstore = get_vectorstore(text_chunks)
                 st.session_state.conversation = get_conversation_chain(vectorstore)
             st.success("Processing complete! Ready to receive questions.")
-    
-    user_question = st.text_input("What's going on? (Type a topic or question here)")
-    if user_question:
-        handle_user_input(user_question)
+            
+            handle_user_input("")
+            st.session_state.initial_prompt_done = True
 
-    if st.session_state.conversation:
+    if st.session_state.initial_prompt_done:
+        if st.session_state.follow_up:
+            st.write(bot_template.replace("{{MSG}}", "Are you familiar with blood age?"), unsafe_allow_html=True)
+            col1, col2 = st.columns(2)
+            if col1.button("Yes", disabled=st.session_state.buttons_disabled):
+                st.session_state.buttons_disabled = True
+                handle_follow_up("Yes")
+            if col2.button("No", disabled=st.session_state.buttons_disabled):
+                st.session_state.buttons_disabled = True
+                handle_follow_up("No")
+        # else:
+        #     user_question = st.text_input("What's going on? (Type a topic or question here)")
+        #     if user_question:
+        #         handle_user_input(user_question)
+
+    if st.session_state.conversation and not st.session_state.follow_up:
         st.write("DebateGPT is ready to respond to your questions.")
 
     with st.sidebar:
