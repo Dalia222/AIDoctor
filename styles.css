@@ -1,0 +1,194 @@
+.stApp > header {
+  background-color: transparent;
+}
+
+.stApp {
+  margin: auto;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow: auto;
+  animation: gradient 15s ease infinite;
+  background-size: 400% 400%;
+  background-attachment: fixed;
+  background: linear-gradient(
+    315deg,
+    #ffffff53 3%,
+    #ffdb8057 38%,
+    #ecf9f9 68%,
+    #87b1ff6e 98%
+  );
+}
+
+.stContent {
+  display: flex;
+  justify-content: center; /* Center the content horizontally */
+}
+
+.stApp > footer {
+  width: 100%; /* Ensure the footer spans the entire width */
+}
+
+/* buttons style */
+.button-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Styling the button */
+div.stButton > button:first-child {
+  border-color: #036f54;
+  background-color: #21b48f;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+/* Styling on hover */
+div.stButton > button:first-child:hover {
+  background-color: #10a37f;
+  color: #efe6ff;
+}
+
+div.stMarkdown > p {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* CSS for container */
+.styled-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* CSS for content */
+.styled-content {
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+}
+
+/* CSS for buttons */
+.styled-button {
+  margin: 10px;
+  padding: 10px 20px;
+  font-size: 18px;
+}
+
+.styled-button:hover {
+  background-color: #4caf50;
+  color: white;
+}
+
+/* CSS for markdown text */
+.styled-markdown {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* CSS for the card */
+.card {
+  /* border: 2px solid #ffffff; */
+  border-radius: 10px;
+  padding: 5px;
+  text-align: center;
+}
+
+.card-content {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* Apply styling to all select boxes */
+.st-bb {
+  border-color: #333;
+  background-color: white;
+  color: rgb(0, 0, 0);
+}
+body {
+    background: linear-gradient(to right, #e0f7fa, #b2ebf2);
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .chat-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 2rem;
+    background-color: #f5f5f5;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .chat-message {
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+  }
+  
+  .chat-message.user {
+    background-color: #d1e7ff;
+  }
+  
+  .chat-message.bot {
+    background-color: #e0f7fa;
+  }
+  
+  .chat-message .avatar {
+    width: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .chat-message .avatar img {
+    max-width: 78px;
+    max-height: 78px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .chat-message .message {
+    width: 80%;
+    padding: 0 1.5rem;
+    color: #333;
+  }
+  
+  .sidebar .old-tests {
+    background-color: #f5f5f5;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .sidebar .old-tests h4 {
+    margin-top: 0;
+    color: #333;
+  }
+  
+  .sidebar .old-tests p {
+    margin: 0;
+    color: #666;
+  }
+  

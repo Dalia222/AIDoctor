@@ -7,7 +7,14 @@ from langchain.vectorstores import FAISS
 from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
-from htmlTemplates import css, bot_template, user_template
+from htmlTemplates import bot_template, user_template
+
+# Load the CSS from the file
+def load_css(file_name):
+    with open(file_name, "r") as f:
+        return f.read()
+
+css = load_css("styles.css")
 
 # Initial prompts as described in the request
 prompt_template0 = """
@@ -76,7 +83,7 @@ def handle_initial_prompt():
         response = st.session_state.conversation({'question': prompt})
         answer = response['answer']
         st.session_state.chat_history += bot_template.replace("{{MSG}}", answer)
-        st.write(st.session_state.chat_history, unsafe_allow_html=True)
+        st.write(f'<div class="chat-container">{st.session_state.chat_history}</div>', unsafe_allow_html=True)
         st.session_state.initial_prompt_done = True
         st.session_state.follow_up = True
 
@@ -95,7 +102,7 @@ def handle_follow_up(answer):
     st.session_state.follow_up = False
     st.session_state.buttons_disabled = True
     st.session_state.follow_up_done = True  # Mark follow-up as done
-    st.write(st.session_state.chat_history, unsafe_allow_html=True)
+    st.write(f'<div class="chat-container">{st.session_state.chat_history}</div>', unsafe_allow_html=True)
 
 def handle_user_input(user_question):
     st.session_state.chat_history += user_template.replace("{{MSG}}", user_question)
@@ -114,12 +121,13 @@ def handle_user_input(user_question):
     response = st.session_state.conversation({'question': prompt})
     answer = response['answer']
     st.session_state.chat_history += bot_template.replace("{{MSG}}", answer)
-    st.write(st.session_state.chat_history, unsafe_allow_html=True)
+    st.write(f'<div class="chat-container">{st.session_state.chat_history}</div>', unsafe_allow_html=True)
 
 def main():
     load_dotenv()
+    
     st.set_page_config(page_title="DoctorGPT", page_icon="🩺")
-    st.write(css, unsafe_allow_html=True)
+    st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)  # Ensure the CSS is applied early in the main function
 
     if "conversation" not in st.session_state:
         st.session_state.conversation = None
@@ -185,7 +193,7 @@ def main():
     with st.sidebar:
         st.subheader("Old blood tests:")
         for file in st.session_state.uploaded_files:
-            st.write(file)
+            st.write(f"<p>{file}</p>", unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
