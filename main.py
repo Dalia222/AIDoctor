@@ -148,6 +148,11 @@ def main():
                 text_chunks = get_text_chunks(raw_content)
                 vectorstore = get_vectorstore(text_chunks)
                 st.session_state.conversation = get_conversation_chain(vectorstore)
+            
+            # Extract filenames and append them to the session state
+            filenames = [pdf.name for pdf in pdfs]
+            st.session_state.uploaded_files.extend(filenames)
+            
             st.success("Processing complete! Ready to receive questions.")
             
             handle_initial_prompt()
