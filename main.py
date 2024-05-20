@@ -21,7 +21,7 @@ prompt_template0 = """
 You are a professional doctor. Based on the blood statistics PDF uploaded, tell the patient their blood age (glycan age) and compare it to their chronological age. 
 Provide the answer in this format:
 
-Hi there! I'm your AI Doctor. Based on the information from your GlycanAge report, your biological age is [BIOLOGICAL_AGE] years. This is [DIFFERENCE] years [younger/older] than your chronological age, which is [CHRONOLOGICAL_AGE] years.
+Hi there! I'm your AI Health Assistant. Based on the information from your GlycanAge report, your biological age is [BIOLOGICAL_AGE] years. This is [DIFFERENCE] years [younger/older] than your chronological age, which is [CHRONOLOGICAL_AGE] years.
 
 This indicates that your immune system and overall health are performing much [younger/older] than your actual age, likely due to factors such as lifestyle choices, diet, exercise, and potentially genetic advantages.
 """
@@ -126,7 +126,7 @@ def handle_user_input(user_question):
 def main():
     load_dotenv()
     
-    st.set_page_config(page_title="DoctorGPT", page_icon="🩺")
+    st.set_page_config(page_title="Health Assistant", page_icon="🩺")
     st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)  # Ensure the CSS is applied early in the main function
 
     if "conversation" not in st.session_state:
@@ -144,7 +144,7 @@ def main():
     if "uploaded_files" not in st.session_state:
         st.session_state.uploaded_files = []
 
-    st.header("Your AI Doctor 🩺")
+    st.header("Your AI Health Assistant 🩺")
     pdfs = st.file_uploader("Upload your PDFs here and click on process", accept_multiple_files=True)
     processBtn = st.button("Process")
     if processBtn:
@@ -191,9 +191,9 @@ def main():
         st.write("DoctorGPT is ready to respond to your questions.")
 
     with st.sidebar:
-        st.subheader("Old blood tests:")
+        st.subheader("Uploads:")
         for file in st.session_state.uploaded_files:
-            st.write(f"<p>{file}</p>", unsafe_allow_html=True)
+            st.write(f"<p>  {file}</p>", unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
