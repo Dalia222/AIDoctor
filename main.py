@@ -10,6 +10,8 @@ from htmlTemplates import bot_template, user_template
 from dotenv import load_dotenv
 import os
 
+
+st.set_page_config(page_title="Health Assistant", page_icon="🩺")
 load_dotenv()
 openai_api_key = os.getenv('OPENAI_API_KEY')
 if not openai_api_key:
@@ -130,7 +132,7 @@ def handle_user_input(user_question):
 def main():
     load_dotenv()
     
-    st.set_page_config(page_title="Health Assistant", page_icon="🩺")
+    
     st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)  # Ensure the CSS is applied early in the main function
 
     if "conversation" not in st.session_state:
