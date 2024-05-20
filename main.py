@@ -1,5 +1,4 @@
 import streamlit as st
-from dotenv import load_dotenv
 from PyPDF2 import PdfReader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings import OpenAIEmbeddings
@@ -8,15 +7,14 @@ from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
 from htmlTemplates import bot_template, user_template
+from dotenv import load_dotenv
 
-# Load the CSS from the file
 def load_css(file_name):
     with open(file_name, "r") as f:
         return f.read()
 
 css = load_css("styles.css")
 
-# Initial prompts as described in the request
 prompt_template0 = """
 You are a professional doctor. Based on the blood statistics PDF uploaded, tell the patient their blood age (glycan age) and compare it to their chronological age. 
 Provide the answer in this format:
