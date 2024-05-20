@@ -14,8 +14,7 @@ import os
 st.set_page_config(page_title="Health Assistant", page_icon="🩺")
 load_dotenv()
 openai_api_key = os.getenv('OPENAI_API_KEY')
-if not openai_api_key:
-    st.error("key: ", openai_api_key)
+
 
 def load_css(file_name):
     with open(file_name, "r") as f:
