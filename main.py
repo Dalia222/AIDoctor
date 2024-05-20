@@ -8,6 +8,12 @@ from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
 from htmlTemplates import bot_template, user_template
 from dotenv import load_dotenv
+import os
+
+load_dotenv()
+openai_api_key = os.getenv('OPENAI_API_KEY')
+if not openai_api_key:
+    st.error("Please set the OPENAI_API_KEY environment variable.")
 
 def load_css(file_name):
     with open(file_name, "r") as f:
